@@ -1,11 +1,10 @@
-﻿//Задача 50. Напишите программу, которая на вход принимает число и ищет его в двумерном массиве. Программа должна возвращать значение позиции (номер строки и столбца) этого элемента или же указание, что такого элемента нет.
+﻿//Задача 52. Задайте двумерный массив из целых чисел. Найдите среднее арифметическое элементов в каждом столбце.
+
 //Например, задан массив:
-//
 //1 4 7 2
 //5 9 2 3
 //8 4 2 4
-//17 -> такого числа в массиве нет
-
+//Среднее арифметическое каждого столбца: 4,6; 5,6; 3,6; 3.
 
 
 int [,] FillArray (int rows, int columns, int min, int max)
@@ -16,7 +15,7 @@ int [,] FillArray (int rows, int columns, int min, int max)
     {
         for (int j = 0; j < columns; j++)
         {
-           result [i,j] = k.Next(min, max);
+           result [i,j] = k.Next(min+1, max);
         }
     }
     return result;
@@ -27,42 +26,47 @@ void WriteArray ( int [,] Array)
 {
     int rows = Array.GetUpperBound(0)+1;
     int columns = Array.Length / rows;
-
-    Console.WriteLine($"number of rows: {rows}, number of columns: {columns}");
+    
     for (int i = 0; i < rows; i++)
     {
-        Console.WriteLine("\n");
         for (int j = 0; j < columns; j++)
         {
-            Console.Write($" {Array [i, j]} ");
+            string c = (Array[i,j] > 0) ? " " : "";
+            Console.Write($"\t{c}{Array [i, j]:d2}");
         }
+        Console.Write("\n");
+    }
+}
+
+void WriteArray1D ( double [] Array)
+{
+    for (int i = 0; i < Array.Length; i++)
+    {
+        Console.Write($"\t{Array [i]:f2}");
     }
     Console.WriteLine("\n");
 }
 
-int [] FindNumberPosition (int [,] Array, int target)
+
+
+double [] FindAriphmeticMeanByColumns (int [,] Array)
 {
-    int [] result = new int [2];
     int rows = Array.GetUpperBound(0)+1;
     int columns = Array.Length / rows;
+    double [] result = new double [columns];
 
-    for (int i = 0; i < rows; i++)
+    for (int j = 0; j < columns; j++)
     {
-        for ( int j = 0; j < columns; j++)
+        double accumulator = 0;
+        for ( int i = 0; i < rows; i++)
         {
-            if (target == Array [i, j])
-            {
-                result [0] = i;
-                result [1] = j;
-                return result;
-            }
+            accumulator += Array [i, j];
         }
+        result [j] = accumulator / rows;
     }
-    result [0] = -1;
-    result [1] = -1;
+
     return result;
 }
-
 
 int columns, rows;
 
@@ -75,15 +79,9 @@ Console.WriteLine($"Enter number of rows: ");
 rows = int.Parse(Console.ReadLine()!);
 
 int [,] Array = FillArray(rows, columns, -100, 100);
-
+Console.WriteLine($"Values of the array items are:");
 WriteArray (Array);
 
-Console.WriteLine($"Enter the target number: ");
-int target = int.Parse(Console.ReadLine()!);
-
-int [] indexOfNumber = FindNumberPosition( Array, target );
-
-if (indexOfNumber[0] == -1) Console.WriteLine($"There no such number in the array.");
-else Console.WriteLine($"The target number is in the row {indexOfNumber[0]+1}, column {indexOfNumber[1]+1}");
-
-
+double [] ariphmeticMeansRow = FindAriphmeticMeanByColumns( Array );
+Console.WriteLine($"Values of ariphmetic means by columns are: ");
+WriteArray1D (ariphmeticMeansRow);
